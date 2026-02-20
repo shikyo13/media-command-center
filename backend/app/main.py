@@ -30,7 +30,6 @@ from app.services.overseerr import OverseerrClient
 from app.services.plex import PlexClient
 from app.services.tdarr import TdarrClient
 from app.services.sabnzbd import SABnzbdClient
-from app.services.unpackerr import UnpackerrClient
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +44,6 @@ CLIENT_FACTORIES: dict[str, Any] = {
     "plex": lambda s: PlexClient(s.plex_url, s.plex_token),
     "tdarr": lambda s: TdarrClient(s.tdarr_url, s.tdarr_api_key),
     "sabnzbd": lambda s: SABnzbdClient(s.sabnzbd_url, s.sabnzbd_api_key),
-    "unpackerr": lambda s: UnpackerrClient(s.unpackerr_url),
 }
 
 # -- Collector intervals (seconds) -----------------------------------------

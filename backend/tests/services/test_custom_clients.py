@@ -1,4 +1,4 @@
-"""Tests for custom service clients (Plex, SABnzbd, Tdarr, Unpackerr)."""
+"""Tests for custom service clients (Plex, SABnzbd, Tdarr)."""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ import respx
 from app.services.plex import PlexClient
 from app.services.sabnzbd import SABnzbdClient
 from app.services.tdarr import TdarrClient
-from app.services.unpackerr import UnpackerrClient
 
 
 # ---------------------------------------------------------------------------
@@ -170,66 +169,3 @@ class TestTdarrClient:
         await client.close()
 
 
-# ---------------------------------------------------------------------------
-# Unpackerr
-# ---------------------------------------------------------------------------
-
-SAMPLE_PROMETHEUS = """\
-# HELP unpackerr_extractions_total Total number of extractions.
-# TYPE unpackerr_extractions_total counter
-unpackerr_extractions_total{app="sonarr"} 42
-unpackerr_extractions_total{app="radarr"} 18
-# HELP unpackerr_bytes_written_total Total bytes written.
-# TYPE unpackerr_bytes_written_total counter
-unpackerr_bytes_written_total 123456789
-"""
-
-
-class TestUnpackerrClient:
-    @pytest.fixture
-    def client(self):
-        return UnpackerrClient(
-            base_url="http://localhost:5656",
-            retry_base_delay=0.01,
-        )
-
-    @respx.mock
-    async def test_get_metrics(self, client: UnpackerrClient) -> None:
-        """Prometheus text is parsed into a structured dict of metric families."""
-        route = respx.get("http://localhost:5656/metrics").mock(
-            return_value=httpx.Response(200, text=SAMPLE_PROMETHEUS)
-        )
-
-        result = await client.get_metrics()
-
-        # Two distinct metric names
-        assert "unpackerr_extractions_total" in result
-        assert "unpackerr_bytes_written_total" in result
-
-        # extractions_total has two labelled entries
-        extractions = result["unpackerr_extractions_total"]
-        assert len(extractions) == 2
-        assert extractions[0] == {"labels": {"app": "sonarr"}, "value": 42.0}
-        assert extractions[1] == {"labels": {"app": "radarr"}, "value": 18.0}
-
-        # bytes_written_total has one entry with no labels
-        bytes_written = result["unpackerr_bytes_written_total"]
-        assert len(bytes_written) == 1
-        assert bytes_written[0] == {"labels": {}, "value": 123456789.0}
-
-        assert route.called
-
-        await client.close()
-
-    @respx.mock
-    async def test_test_connection(self, client: UnpackerrClient) -> None:
-        """test_connection returns True when /metrics responds with 200."""
-        respx.get("http://localhost:5656/metrics").mock(
-            return_value=httpx.Response(200, text="# empty metrics")
-        )
-
-        result = await client.test_connection()
-
-        assert result is True
-
-        await client.close()

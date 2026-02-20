@@ -27,12 +27,7 @@ class TestSettings:
         assert "plex" in settings.configured_services()
 
     def test_tdarr_configured_no_api_key(self, monkeypatch):
-        """Tdarr and Unpackerr don't need API keys."""
+        """Tdarr doesn't need an API key."""
         monkeypatch.setenv("TDARR_URL", "http://localhost:8265")
         settings = Settings(_env_file=None)
         assert "tdarr" in settings.configured_services()
-
-    def test_unpackerr_configured(self, monkeypatch):
-        monkeypatch.setenv("UNPACKERR_URL", "http://localhost:5656")
-        settings = Settings(_env_file=None)
-        assert "unpackerr" in settings.configured_services()

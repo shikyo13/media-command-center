@@ -179,8 +179,8 @@ class TestBazarrClient:
         assert result == {"version": "1.2"}
         assert route.called
         request = route.calls[0].request
-        # Bazarr uses lowercase "apikey" header
-        assert request.headers["apikey"] == "test-bazarr-key"
+        # Bazarr uses X-API-KEY header
+        assert request.headers["X-API-KEY"] == "test-bazarr-key"
 
         await client.close()
 

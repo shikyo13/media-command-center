@@ -47,9 +47,6 @@ class Settings(BaseSettings):
     sabnzbd_url: str = ""
     sabnzbd_api_key: str = ""
 
-    # Unpackerr
-    unpackerr_url: str = ""
-
     # Recyclarr
     recyclarr_exe_path: str = ""
 
@@ -64,9 +61,8 @@ class Settings(BaseSettings):
         if self.plex_url and self.plex_token:
             services.append("plex")
         # URL-only services (no API key required)
-        for name in ("tdarr", "unpackerr"):
-            if getattr(self, f"{name}_url"):
-                services.append(name)
+        if self.tdarr_url:
+            services.append("tdarr")
         # Recyclarr: exe path
         if self.recyclarr_exe_path:
             services.append("recyclarr")
