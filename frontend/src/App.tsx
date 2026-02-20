@@ -1,20 +1,25 @@
-function App() {
+import { useWebSocket } from '@/hooks/useWebSocket'
+import { Shell } from '@/components/layout/Shell'
+import { HealthGrid } from '@/components/panels/HealthGrid'
+import { DownloadsPanel } from '@/components/panels/DownloadsPanel'
+import { StreamingPanel } from '@/components/panels/StreamingPanel'
+import { TranscodingPanel } from '@/components/panels/TranscodingPanel'
+import { CalendarPanel } from '@/components/panels/CalendarPanel'
+
+export default function App() {
+  useWebSocket()
+
   return (
-    <div className="min-h-screen p-8">
-      <h1 className="text-2xl font-bold text-glow-primary mb-4">
-        Media Command Center
-      </h1>
-      <div className="glass-card glow-primary p-6 max-w-md">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="status-dot status-dot-online" />
-          <span className="text-text-primary">System Online</span>
-        </div>
-        <div className="progress-bar">
-          <div className="progress-bar-fill active" style={{ width: '65%' }} />
-        </div>
-      </div>
-    </div>
+    <Shell>
+      {(view) => (
+        <>
+          {(view === 'overview' || view === 'health') && <HealthGrid />}
+          {(view === 'overview' || view === 'downloads') && <DownloadsPanel />}
+          {(view === 'overview' || view === 'streaming') && <StreamingPanel />}
+          {(view === 'overview' || view === 'transcoding') && <TranscodingPanel />}
+          {(view === 'overview' || view === 'calendar') && <CalendarPanel />}
+        </>
+      )}
+    </Shell>
   )
 }
-
-export default App
