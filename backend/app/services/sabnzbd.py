@@ -47,8 +47,8 @@ class SABnzbdClient(BaseClient):
     # -- SABnzbd-specific endpoints ------------------------------------------
 
     async def get_system_status(self) -> Any:
-        """Full status report."""
-        return await self._api("fullstatus")
+        """Version check (fullstatus was removed in SABnzbd 4.x)."""
+        return await self._api("version")
 
     async def get_queue(self) -> Any:
         """Current download queue."""
