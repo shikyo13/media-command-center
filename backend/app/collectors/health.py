@@ -59,4 +59,12 @@ class HealthCollector(BaseCollector):
             for key in ("version", "Version"):
                 if key in response:
                     return str(response[key])
+            # Plex wraps identity data in MediaContainer
+            mc = response.get("MediaContainer")
+            if isinstance(mc, dict) and "version" in mc:
+                return str(mc["version"])
+            # Bazarr wraps status in a data envelope
+            data = response.get("data")
+            if isinstance(data, dict) and "bazarr_version" in data:
+                return str(data["bazarr_version"])
         return ""

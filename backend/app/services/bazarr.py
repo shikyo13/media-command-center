@@ -1,4 +1,4 @@
-"""Bazarr API client — /api/ (no version), lowercase 'apikey' header."""
+"""Bazarr API client — /api/ (no version), 'X-API-KEY' header."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ class BazarrClient(BaseClient):
 
     Key differences from other *arr clients:
     - URL prefix is ``/api/`` (no version segment).
-    - Auth header is lowercase ``apikey``, not ``X-Api-Key``.
+    - Auth header is ``X-API-KEY``.
     """
 
     service_name = "bazarr"
@@ -26,7 +26,7 @@ class BazarrClient(BaseClient):
 
     def _get_headers(self) -> dict[str, str]:
         return {
-            "apikey": self._api_key,
+            "X-API-KEY": self._api_key,
             "Accept": "application/json",
         }
 

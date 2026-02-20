@@ -42,9 +42,9 @@ class SonarrClient(BaseClient):
         self, start: str | None = None, end: str | None = None
     ) -> Any:
         """GET calendar with optional date range."""
-        params: dict[str, Any] = {}
+        params: dict[str, Any] = {"includeSeries": "true"}
         if start is not None:
             params["start"] = start
         if end is not None:
             params["end"] = end
-        return await self.get("calendar", params=params or None)
+        return await self.get("calendar", params=params)
